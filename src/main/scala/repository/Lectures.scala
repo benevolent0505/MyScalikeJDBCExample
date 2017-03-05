@@ -1,6 +1,6 @@
 package repository
 
-import models.Lecture
+import models.{Lecture, Teacher}
 import org.joda.time.LocalDateTime
 import scalikejdbc.{AutoSession, DBSession, WrappedResultSet, _}
 
@@ -9,7 +9,7 @@ import scalikejdbc.{AutoSession, DBSession, WrappedResultSet, _}
  */
 object Lectures {
 
-  def * = (rs: WrappedResultSet) => Lecture(
+  def *(implicit s: DBSession = AutoSession) = (rs: WrappedResultSet) => Lecture(
     rs.long("id"),
     rs.string("category"),
     rs.jodaLocalDateTime("date"),
@@ -23,10 +23,10 @@ object Lectures {
 
   def create(category: String, date: LocalDateTime, period: Int, name: String, teacherName: String, remark: String,
     createdAt: LocalDateTime = LocalDateTime.now, updatedAt: LocalDateTime = LocalDateTime.now)(implicit s: DBSession = AutoSession): Lecture = {
-    val teacher = Teachers.findOrCreateByName(name)
+    val teacher = Teachers.findOrCreateByName(teacherName)
     val id: Long =
       sql"""
-           insert into Lectures(category, date, period, subject, teacher_id, remark, created_at, updated_at)
+           insert into Lectures (category, date, period, name, teacher_id, remark, created_at, updated_at)
            values (${category}, ${date}, ${period}, ${name}, ${teacher.id}, ${remark}, ${createdAt}, ${updatedAt})"""
       .updateAndReturnGeneratedKey.apply()
 
@@ -41,6 +41,12 @@ object Lectures {
   def findByName(name: String)(implicit s: DBSession = AutoSession): Option[Lecture] = {
     sql"""select * from Lectures where name = ${name}"""
       .map(*).single().apply()
+  }
+
+  // TODO: Paging
+  def findByTeacher(teacher: Teacher)(implicit s: DBSession = AutoSession): Seq[Lecture] = {
+    sql"""select * from Lectures where teacher_id = ${teacher.id}"""
+      .map(*).list().apply()
   }
 
   def findAll()(implicit s: DBSession = AutoSession): Seq[Lecture] = {

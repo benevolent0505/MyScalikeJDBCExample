@@ -19,12 +19,12 @@ object Teachers {
   }
 
   def findById(id: Long)(implicit s: DBSession = AutoSession): Option[Teacher] = {
-    sql"""select * from Teachers WHERE id = ${id}"""
+    sql"""select * from Teachers where id = ${id}"""
       .map(*).single().apply()
   }
 
   def findByName(name: String)(implicit s: DBSession = AutoSession): Option[Teacher] = {
-    sql"SELECT * FROM Teachers WHERE name = ${name}"
+    sql"select * from Teachers where name = ${name}"
       .map(*).single().apply()
   }
 
