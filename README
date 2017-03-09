@@ -1,0 +1,5 @@
+# My ScalikeJDBC Example
+
+ScalikeJDBCの使い方をなんとなくつかむためのレポジトリ.
+
+題材が題材なので複雑なクエリを発行していない (selectとinsertだけ).
