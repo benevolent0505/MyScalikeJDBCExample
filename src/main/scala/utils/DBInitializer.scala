@@ -13,20 +13,23 @@ object DBInitializer {
         sql"""select 1 from Teachers limit 1""".map(_.long(1)).single().apply()
       } catch {
         case e: java.sql.SQLException =>
-          sql"""
+          NamedDB(name) localTx { implicit session =>
+            sql"""
                 create table Teachers (
                     id serial not null primary key,
                     name varchar(64) not null UNIQUE,
                     created_at timestamp not null
                 )
               """.execute.apply()
+          }
       }
 
       try {
         sql"""select 1 from Lectures limit 1""".map(_.long(1)).single().apply()
       } catch {
         case e: java.sql.SQLException =>
-          sql"""
+          NamedDB(name) localTx { implicit session =>
+            sql"""
                 create table Lectures (
                     id serial not null primary key,
                     category varchar(64) not null,
@@ -39,6 +42,7 @@ object DBInitializer {
                     updated_at timestamp not null
                 )
               """.execute().apply()
+          }
       }
     }
   }

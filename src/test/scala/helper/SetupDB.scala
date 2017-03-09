@@ -10,7 +10,7 @@ import utils.DBInitializer
 trait SetupDB extends BeforeAndAfterAll { self: fixture.FlatSpec =>
 
   override def beforeAll(): Unit = {
-    DBs.setupAll()
+    DBs.setup('test)
     DBInitializer.run('test)
 
     super.beforeAll()
