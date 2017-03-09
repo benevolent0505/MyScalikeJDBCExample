@@ -28,12 +28,8 @@ class LecturesTest extends fixture.FlatSpec with SetupDB with AutoRollback {
   behavior of "Lectures"
 
   it should "create a Lecture by some params" in { implicit s =>
-    val category = "人文社会"
-    val date = new LocalDateTime(2016, 10, 5, 0, 0, 0)
-    val period = 5
-    val name = "美術B"
-    val teacherName = "久々湊"
-    val remark = ""
+    val (category, date, period, name, teacherName, remark) =
+      ("人文社会", new LocalDateTime(2016, 10, 5, 0, 0, 0), 5, "美術B", "久々湊", "")
 
     val created = Lectures.create(
       category = category,
@@ -51,6 +47,22 @@ class LecturesTest extends fixture.FlatSpec with SetupDB with AutoRollback {
     assert(created.name === name)
     assert(teacher.name === teacherName)
     assert(created.remark === remark)
+  }
+
+  it should "find or create lecture by some params" in { implicit s =>
+    val (category1, date1, period1, name1, teacherName1, remark1) =
+      ("2昼", new LocalDateTime(2016, 4, 13, 0, 0, 0), 5, "物理学概論第一(再履修)", "浅井", "初回授業は4月20日(水)になります")
+    val (category2, date2, period2, name2, teacherName2, remark2) =
+      ("人文社会", new LocalDateTime(2016, 10, 5, 0, 0, 0), 5, "美術B", "久々湊", "")
+
+    val found = Lectures.findOrCreate(category1, date1, period1, name1, teacherName1, remark1)
+    val created = Lectures.findOrCreate(category2, date2, period2, name2, teacherName2, remark2)
+
+    assert(found.name === name1)
+    assert(found.date === date1)
+
+    assert(created.name === name2)
+    assert(created.date === date2)
   }
 
   it should "find a lecture by lecture name" in { implicit s =>

@@ -33,6 +33,14 @@ object Lectures {
     Lecture(id, category, date, period, name, Some(teacher), remark, createdAt, updatedAt)
   }
 
+  def findOrCreate (category: String, date: LocalDateTime, period: Int, name: String, teacherName: String, remark: String,
+    createdAt: LocalDateTime = LocalDateTime.now, updatedAt: LocalDateTime = LocalDateTime.now)(implicit s: DBSession = AutoSession): Lecture = {
+    findByName(name) match {
+      case Some(lecture) => lecture
+      case None => create(category, date, period, name, teacherName, remark, createdAt, updatedAt)
+    }
+  }
+
   def findById(id: Long)(implicit s: DBSession = AutoSession): Option[Lecture] = {
     sql"""select * from Lectures Where id = ${id}"""
       .map(*).single().apply()
