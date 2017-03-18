@@ -10,3 +10,10 @@ case class Teacher (
   name: String,
   createdAt: LocalDateTime
 )
+
+object Teacher {
+  def apply(
+    name: String,
+    createdAt: LocalDateTime
+  ): Teacher = new Teacher(0l, name, createdAt)
+}
